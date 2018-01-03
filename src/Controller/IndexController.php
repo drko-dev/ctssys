@@ -24,7 +24,7 @@ class IndexController extends Controller
      */
     public function demo(Request $request)
     {   
-        ($this->mail('gustavito')) ? var_dump('se envio ok') : var_dump('no se envio');
+        $this->mail('gustavito');
         return $this->render('default/index.html.twig');
     }    
 
