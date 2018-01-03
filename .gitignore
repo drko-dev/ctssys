@@ -1,14 +1,14 @@
 
 ###> symfony/framework-bundle ###
-.env
-/public/bundles/
+#.env
+#/public/bundles/
 /var/
-/vendor/
+#/vendor/
 ###< symfony/framework-bundle ###
 
 ###> symfony/webpack-encore-pack ###
-/node_modules/
-/public/build/
+#/node_modules/
+#/public/build/
 ###< symfony/webpack-encore-pack ###
 
 ###> symfony/phpunit-bridge ###

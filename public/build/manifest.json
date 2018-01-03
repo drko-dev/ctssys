@@ -1,0 +1,29 @@
+{
+  "short_name": "symfony-vue",
+  "name": "symfony-vue",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/build/images/256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "/build/images/512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#FAFAFA",
+  "theme_color": "#e10b0b",
+  "display": "standalone",
+  "orientation": "portrait",
+  "gcm_sender_id": "314804067424",
+  "/public/build/fonts\\fontawesome-webfont.eot": "/public/build/fonts/fontawesome-webfont.674f50d2.eot",
+  "/public/build/fonts\\fontawesome-webfont.ttf": "/public/build/fonts/fontawesome-webfont.b06871f2.ttf",
+  "/public/build/fonts\\fontawesome-webfont.woff": "/public/build/fonts/fontawesome-webfont.fee66e71.woff",
+  "/public/build/fonts\\fontawesome-webfont.woff2": "/public/build/fonts/fontawesome-webfont.af7ae505.woff2",
+  "/public/build/images\\fontawesome-webfont.svg": "/public/build/images/fontawesome-webfont.912ec66d.svg",
+  "/public/build/main.js": "/public/build/main.js",
+  "/public/build/style.css": "/public/build/style.css"
+}
