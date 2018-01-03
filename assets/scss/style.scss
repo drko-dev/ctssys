@@ -1,0 +1,77 @@
+//@import "~buefy/lib/buefy.css";
+@import "~bulma/sass/utilities/_all";
+
+// COLORES DEL SITIO
+$back-site: #363636;
+$primary: #167df0;
+$primary-invert: findColorInvert($primary);
+$twitter: #4099FF;
+$twitter-invert: findColorInvert($twitter);
+
+// SETEO VARIABLES POR DEFECTO
+//$navbar-item-active-background-color: #F5F5F5 !default
+$body-background-color: $dark !default
+//$body-color: $white !default
+
+// Setup $colors to use as bulma classes (e.g. 'is-twitter')
+$colors: (
+    "white": ($white, $black),
+    "black": ($black, $white),
+    "light": ($light, $light-invert),
+    "dark": ($dark, $dark-invert),
+    "primary": ($primary, $primary-invert),
+    "info": ($info, $info-invert),
+    "success": ($success, $success-invert),
+    "warning": ($warning, $warning-invert),
+    "danger": ($danger, $danger-invert),
+    "twitter": ($twitter, $twitter-invert)
+);
+
+// Links
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+// Import Bulma and Buefy styles
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+//@import '~material-design-icons/iconfont/material-icons';
+
+@import '~font-awesome/scss/font-awesome.scss';
+
+.level-padding{
+    padding: 1rem;   
+}
+
+.icon-logo,.icon-logo\:regular{
+    background-image:url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2026.458%2026.458%22%20width%3D%22100%22%20version%3D%221.1%22%20height%3D%22100%22%3E%3Cg%20transform%3D%22translate%280%20-270.54%29%22%3E%3Cg%20transform%3D%22matrix%28.12052%200%200%20.12052%201.1772%20260.03%29%22%20fill%3D%22%23fff%22%3E%3Cpath%20stroke-width%3D%22.44873%22%20d%3D%22m112.38%20296.3c-8.7358-2.36-15.235-6.9758-19.078-13.55-5.6294-9.6294-12.819-28.106-13.849-35.589-0.27915-2.0292-0.45963-12.488-0.44413-25.759%200.03299-29.315%200.442-31.913%206.1803-39.342%201.6614-2.1509%204.5724-5.9392%206.4691-8.4187%201.8967-2.4793%206.244-7.6348%209.6608-11.457%203.4168-3.8217%209.173-10.307%2012.792-14.413%2013.298-15.086%2026.791-26.016%2050.538-40.939%2012.964-8.1468%2017.168-9.8294%2024.555-9.8294%204.2847%200%205.5485%200.86868%207.5321%205.1809%202.4438%205.3119%202.9313%207.8254%203.2063%2016.53%200.42861%2013.572-1.3211%2024.227-6.9941%2042.586-0.95436%203.0889-2.6847%208.7382-3.8451%2012.554-5.8036%2019.084-13.18%2029.546-29.368%2041.652-13.569%2010.147-15.642%2014.495-15.069%2031.607%200.37317%2011.136-0.20254%2019.347-1.6561%2023.587-1.389%204.0536-4.8902%2012.606-6.3158%2015.426-1.418%202.805-5.1219%206.8738-7.5576%208.3019-4.2534%202.4941-11.468%203.2992-16.757%201.8714zm-66.031-16.726c-3.9871-1.0824-6.5348-2.6847-9.7506-6.1308-3.5633-3.8187-5.4453-7.7588-7.962-16.669-2.4776-8.772-2.9234-12.734-2.8492-25.318%200.07948-13.668-0.58273-15.689-8.3063-25.298-6.2206-7.7393-9.3144-13.475-11.421-21.172-0.89891-3.2848-4.1193-19.227-4.9661-24.583-1.5768-9.9743-1.4256-22.309%200.34506-28.139%201.5918-5.2412%205.5284-6.0832%2012.512-2.676%2012.127%205.9167%2022.765%2013.993%2030.829%2023.405%201.4789%201.7257%205.4238%206.2729%208.7663%2010.104s8.8072%2010.622%2012.144%2015.091c5.6539%207.5726%206.1306%208.3674%207.0077%2011.681%200.5174%201.9558%201.1536%205.1376%201.4136%207.0704%200.59302%204.4117%200.61511%2042.603%200.02718%2048.188-0.27179%202.5848-1.0242%205.7942-2.0538%208.7611-3.0057%208.6603-9.8338%2021.481-12.751%2023.941-2.6657%202.2486-8.3279%203.0088-12.986%201.7432z%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+    background-repeat:no-repeat}
+.icon-logo-dims{
+    width:100px;
+    height:100px
+}
+
+// @media (min-width: 768px) {
+//     @-webkit-keyframes fade-in {
+//         0% {
+//             opacity: 0;
+//         }
+//         100% {
+//             opacity: 1;
+//         }
+//     }
+//     @keyframes fade-in {
+//         0% {
+    
+//             opacity: 0;
+//         }
+//         100% {
+//             opacity: 1;
+//         }
+//     }
+//     .sf-toolbar {
+//         opacity: 0;
+//         -webkit-animation: fade-in 1s .2s forwards;
+//         animation: fade-in 1s .2s forwards;
+//     }
+// }

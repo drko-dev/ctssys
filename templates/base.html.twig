@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html class="is-sitio">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}
+            <!-- load css  -->
+            <link rel="stylesheet" href="{{ asset('build/style.css') }}"/>
+            <!-- preload JS -->
+            <link rel="preload" href="{{ asset("/build/main.js") }}" as="script"/>
+        {% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="manifest" href="{{ asset('build/manifest.json') }}">
+
+        <meta name="theme-color" content="#5f5eaa">
+    </head>
+    <body>
+        <noscript> please make sure to enable javascript! </noscript>
+        {% block body %}{% endblock %}
+        {% block javascripts %}
+            <script type='text/javascript' src='{{ asset("/build/main.js") }}'></script>
+        {% endblock %}    
+    </body>
+</html>
