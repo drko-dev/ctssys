@@ -13,6 +13,7 @@ namespace App\Entity\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Storage agnostic user object.
@@ -29,26 +30,31 @@ abstract class User implements UserInterface, GroupableInterface
 
     /**
      * @var string
+     * @ORM\Column(name="username", type="string", length=180)
      */
     protected $username;
 
     /**
      * @var string
+     * @ORM\Column(name="username_canonical", type="string", length=180, unique=true)
      */
     protected $usernameCanonical;
 
     /**
      * @var string
+     * @ORM\Column(name="email", type="string", length=180)
      */
     protected $email;
 
     /**
      * @var string
+     * @ORM\Column(name="email_canonical", type="string", length=180, unique=true)
      */
     protected $emailCanonical;
 
     /**
      * @var bool
+     * @ORM\Column(type="boolean")
      */
     protected $enabled;
 
@@ -56,6 +62,7 @@ abstract class User implements UserInterface, GroupableInterface
      * The salt to use for hashing.
      *
      * @var string
+     * @ORM\Column(type="string", nullable=true)     
      */
     protected $salt;
 
@@ -63,6 +70,7 @@ abstract class User implements UserInterface, GroupableInterface
      * Encrypted password. Must be persisted.
      *
      * @var string
+     * @ORM\Column(type="string")     
      */
     protected $password;
 
@@ -74,7 +82,8 @@ abstract class User implements UserInterface, GroupableInterface
     protected $plainPassword;
 
     /**
-     * @var \DateTime
+     * @var \DateTime 
+     * @ORM\Column(name="last_login", type="datetime", nullable=true)
      */
     protected $lastLogin;
 
@@ -82,11 +91,13 @@ abstract class User implements UserInterface, GroupableInterface
      * Random string sent to the user email address in order to verify it.
      *
      * @var string
+     * @ORM\Column(name="confirmation_token", type="string", length=180, unique=true, nullable=true)  
      */
     protected $confirmationToken;
 
     /**
      * @var \DateTime
+     * @ORM\Column(name="password_requested_at", type="datetime", nullable=true)
      */
     protected $passwordRequestedAt;
 
@@ -97,6 +108,7 @@ abstract class User implements UserInterface, GroupableInterface
 
     /**
      * @var array
+     * @ORM\Column(type="array")
      */
     protected $roles;
 

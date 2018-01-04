@@ -11,6 +11,8 @@
 
 namespace App\Entity\Model;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
@@ -23,11 +25,13 @@ abstract class Group implements GroupInterface
 
     /**
      * @var string
+     * @ORM\Column(type="string", length=180, unique=true)
      */
     protected $name;
 
     /**
      * @var array
+     * @ORM\Column(type="array")
      */
     protected $roles;
 
