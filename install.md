@@ -90,4 +90,5 @@ npm install --save buefy vue-router
 //
 
 //instalar doctrine
-coposer require orm
+composer require orm
+composer require security

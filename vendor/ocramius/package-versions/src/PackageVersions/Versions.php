@@ -52,6 +52,7 @@ final class Versions
   'symfony/framework-bundle' => 'v4.0.2@82e45a486a2cbdab5d43512bea10af1681dcd8e2',
   'symfony/http-foundation' => 'v4.0.2@aba96bd07be7796c81ca0ceafa7d48a6fef036c8',
   'symfony/http-kernel' => 'v4.0.2@f2ea7461cdcad837b8bc6022b59d5eb8c9618aa5',
+  'symfony/inflector' => 'v4.0.2@8740990f67ec9f89bfa116d11bad2990dd510ece',
   'symfony/lts' => 'dev-master@396c5fca8d73d01186df37d7031321a3c0c2bf92',
   'symfony/maker-bundle' => 'v1.0.2@bf97703ddb68c6b37bd6bab5f5ebd5c7542ca1ef',
   'symfony/monolog-bridge' => 'v4.0.2@da8c15357bcf114a319105524648940faf03fd77',
@@ -61,7 +62,10 @@ final class Versions
   'symfony/polyfill-mbstring' => 'v1.6.0@2ec8b39c38cb16674bbf3fea2b6ce5bf117e1296',
   'symfony/polyfill-php72' => 'v1.6.0@6de4f4884b97abbbed9f0a84a95ff2ff77254254',
   'symfony/profiler-pack' => 'v1.0.3@fa2e2dad522a3bef322196abad28ffce6d0fdbc5',
+  'symfony/property-access' => 'v4.0.2@8dc059852b7bdd8b871eb3ca95b8d70be3b39488',
   'symfony/routing' => 'v4.0.2@972810def5cae044d19195045f7eb418141bf37b',
+  'symfony/security' => 'v4.0.2@6ff0f1e97f583583c10152e4050e8a4fac2cfd1e',
+  'symfony/security-bundle' => 'v4.0.2@3b05217c09492ed797c2ac8244c77f9258f46cd1',
   'symfony/stopwatch' => 'v4.0.2@ac0e49150555c703fef6b696d8eaba1db7a3ca03',
   'symfony/swiftmailer-bundle' => 'v3.1.6@9728097df87e76e2db71fc41fd7d211c06daea3e',
   'symfony/twig-bridge' => 'v4.0.2@aeb221936ad39c579b7e002dfd4e7544a5d666f6',
@@ -75,7 +79,7 @@ final class Versions
   'zendframework/zend-eventmanager' => '3.2.0@9d72db10ceb6e42fb92350c0cb54460da61bd79c',
   'symfony/dotenv' => 'v4.0.2@ffcaeab01e42b0c40669add2aa8e77f79ddb9389',
   'symfony/thanks' => 'v1.0.0@f3e567198cbac9dbec5baf9004f1e51fecc82c79',
-  '__root__' => 'dev-master@c4c910fad7d6884e60a2f6dd086124b468fce75a',
+  '__root__' => 'dev-master@a0c2dd1456479c6d8d1a0c8ae2596c7817a87755',
 );
 
     private function __construct()
