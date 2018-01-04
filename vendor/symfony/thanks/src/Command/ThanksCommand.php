@@ -92,10 +92,18 @@ class ThanksCommand extends BaseCommand
         ],
     ];
 
+    private $star = '⭐ ';
+    private $heart = '💖';
+
     protected function configure()
     {
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $this->star = '*';
+            $this->heart = '<3';
+        }
+
         $this->setName('thanks')
-            ->setDescription('Give thanks (in the form of a GitHub ⭐) to your fellow PHP package maintainers.')
+            ->setDescription(sprintf('Give thanks (in the form of a GitHub %s) to your fellow PHP package maintainers.', $this->star))
             ->setDefinition([
                 new InputOption('dry-run', null, InputOption::VALUE_NONE, 'Don\'t actually send the stars'),
             ])
@@ -110,6 +118,7 @@ class ThanksCommand extends BaseCommand
         $urls = [
             'composer/composer' => 'https://github.com/composer/composer',
             'php/php-src' => 'https://github.com/php/php-src',
+            'symfony/thanks' => 'https://github.com/symfony/thanks',
         ];
 
         $directPackages = $this->getDirectlyRequiredPackageNames();
@@ -118,7 +127,7 @@ class ThanksCommand extends BaseCommand
         foreach ($repo->getPackages() as $package) {
             $extra = $package->getExtra();
 
-            if (isset($extra['thanks']['name']) && isset($extra['thanks']['url'])) {
+            if (isset($extra['thanks']['name'], $extra['thanks']['url'])) {
                 $urls += [$extra['thanks']['name'] => $extra['thanks']['url']];
             }
 
@@ -135,7 +144,7 @@ class ThanksCommand extends BaseCommand
 
             // star the main repository, but only if this package is directly
             // being required by the user's composer.json
-            if (isset(self::$mainRepositories[$owner]) && isset($directPackages[$package->getName()])) {
+            if (isset(self::$mainRepositories[$owner], $directPackages[$package->getName()])) {
                 $urls[self::$mainRepositories[$owner]['name']] = self::$mainRepositories[$owner]['url'];
             }
         }
@@ -145,7 +154,7 @@ class ThanksCommand extends BaseCommand
         $rfs = Factory::createRemoteFilesystem($this->getIo(), $composer->getConfig());
 
         $i = 0;
-        $template ='_%d: repository(owner:"%s",name:"%s"){id,viewerHasStarred}'."\n";
+        $template = '_%d: repository(owner:"%s",name:"%s"){id,viewerHasStarred}'."\n";
         $graphql = '';
 
         foreach ($urls as $package => $url) {
@@ -155,9 +164,9 @@ class ThanksCommand extends BaseCommand
             }
         }
 
-        $repos = $this->callGithub($rfs, sprintf("query{\n%s}", $graphql));
+        $repos = $this->callGitHub($rfs, sprintf("query{\n%s}", $graphql));
 
-        $template ='%1$s: addStar(input:{clientMutationId:"%s",starrableId:"%s"}){clientMutationId}'."\n";
+        $template = '%1$s: addStar(input:{clientMutationId:"%s",starrableId:"%s"}){clientMutationId}'."\n";
         $graphql = '';
         $notStarred = [];
 
@@ -172,16 +181,16 @@ class ThanksCommand extends BaseCommand
             $output->writeln('You already starred all your GitHub dependencies.');
         } else {
             if (!$input->getOption('dry-run')) {
-                $notStarred = $this->callGithub($rfs, sprintf("mutation{\n%s}", $graphql));
+                $notStarred = $this->callGitHub($rfs, sprintf("mutation{\n%s}", $graphql));
             }
 
             $output->writeln('Stars <comment>sent</> to:');
             foreach ($repos as $alias => $repo) {
-                $output->writeln(sprintf(' ⭐  %s - %s', sprintf(isset($notStarred[$alias]) ? '<comment>%s</>' : '%s', $aliases[$alias][0]), $aliases[$alias][1]));
+                $output->writeln(sprintf(' %s %s - %s', $this->star, sprintf(isset($notStarred[$alias]) ? '<comment>%s</>' : '%s', $aliases[$alias][0]), $aliases[$alias][1]));
             }
         }
 
-        $output->writeln("\nThanks to you! 💖");
+        $output->writeln(sprintf("\nThanks to you! %s", $this->heart));
 
         return 0;
     }
@@ -207,7 +216,7 @@ class ThanksCommand extends BaseCommand
             throw new \Exception('Could not find your composer.json file!');
         }
 
-        $data = $file->read() + array('require' => array(), 'require-dev' => array());
+        $data = $file->read() + ['require' => [], 'require-dev' => []];
         $data = array_keys($data['require'] + $data['require-dev']);
 
         return array_combine($data, $data);

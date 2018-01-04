@@ -21,6 +21,8 @@ use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\Factory;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Installer;
+use Composer\Installer\InstallerEvent;
+use Composer\Installer\InstallerEvents;
 use Composer\Installer\PackageEvent;
 use Composer\Installer\PackageEvents;
 use Composer\Installer\SuggestedPackagesReporter;
@@ -29,9 +31,13 @@ use Composer\IO\ConsoleIO;
 use Composer\IO\NullIO;
 use Composer\Json\JsonFile;
 use Composer\Json\JsonManipulator;
+use Composer\Plugin\CommandEvent;
+use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
+use Hirak\Prestissimo\Plugin as Prestissimo;
+use Symfony\Thanks\Thanks;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -46,6 +52,8 @@ class Flex implements PluginInterface, EventSubscriberInterface
     private $postInstallOutput = [''];
     private $operations = [];
     private $lock;
+    private $cacheDirPopulated = false;
+    private $displayThanksReminder = false;
     private static $activated = true;
 
     public function activate(Composer $composer, IOInterface $io)
@@ -162,6 +170,16 @@ class Flex implements PluginInterface, EventSubscriberInterface
             }
         }
 
+        if ($this->displayThanksReminder) {
+            $love = '\\' === DIRECTORY_SEPARATOR ? 'love' : '💖 ';
+            $star = '\\' === DIRECTORY_SEPARATOR ? 'star' : '⭐ ';
+
+            $this->io->writeError('');
+            $this->io->writeError('What about running <comment>composer global require symfony/thanks && composer thanks</> now?');
+            $this->io->writeError(sprintf('This will spread some %s by sending a %s to the GitHub repositories of your fellow package maintainers.', $love, $star));
+            $this->io->writeError('');
+        }
+
         if (!$recipes) {
             $this->lock->write();
 
@@ -170,6 +188,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
         $this->io->writeError(sprintf('<info>Symfony operations: %d recipe%s (%s)</>', count($recipes), count($recipes) > 1 ? 's' : '', $this->downloader->getSessionId()));
         $installContribs = $this->composer->getPackage()->getExtra()['symfony']['allow-contrib'] ?? false;
+        $manifest = null;
         foreach ($recipes as $recipe) {
             if ('install' === $recipe->getJob() && !$installContribs && $recipe->isContrib()) {
                 $warning = $this->io->isInteractive() ? 'WARNING' : 'IGNORING';
@@ -231,7 +250,23 @@ class Flex implements PluginInterface, EventSubscriberInterface
             }
         }
 
+        if (null !== $manifest) {
+            array_unshift(
+                $this->postInstallOutput,
+                '',
+                '<info>Some files may have been created or updated to configure your new packages.</>',
+                'Don\'t hesitate to <comment>review</>, <comment>edit</> and <comment>commit</> them: these files are <comment>yours</>.'
+            );
+        }
+
         $this->lock->write();
+    }
+
+    public function inspectCommand(CommandEvent $event)
+    {
+        if ('update' === $event->getCommandName() && !class_exists(Thanks::class, false)) {
+            $this->displayThanksReminder = true;
+        }
     }
 
     public function executeAutoScripts(Event $event)
@@ -248,6 +283,21 @@ class Flex implements PluginInterface, EventSubscriberInterface
         }
 
         $this->io->write($this->postInstallOutput);
+    }
+
+    public function populateCacheDir(InstallerEvent $event)
+    {
+        if (extension_loaded('curl') && class_exists(Prestissimo::class, false)) {
+            // let hirak/prestissimo handle downloads when the curl extension is installed
+            return;
+        }
+        if ($this->cacheDirPopulated) {
+            return;
+        }
+        $this->cacheDirPopulated = true;
+
+        $downloader = new ParallelDownloader($this->io, $this->composer->getConfig());
+        $downloader->populateCacheDir($event->getOperations());
     }
 
     private function fetchRecipes(): array
@@ -378,12 +428,16 @@ class Flex implements PluginInterface, EventSubscriberInterface
         }
 
         return [
+            InstallerEvents::POST_DEPENDENCIES_SOLVING => [['populateCacheDir', PHP_INT_MAX]],
+            PackageEvents::PRE_PACKAGE_INSTALL => [['populateCacheDir', ~PHP_INT_MAX]],
+            PackageEvents::PRE_PACKAGE_UPDATE => [['populateCacheDir', ~PHP_INT_MAX]],
             PackageEvents::POST_PACKAGE_INSTALL => 'record',
             PackageEvents::POST_PACKAGE_UPDATE => 'record',
             PackageEvents::POST_PACKAGE_UNINSTALL => 'record',
             ScriptEvents::POST_CREATE_PROJECT_CMD => 'configureProject',
             ScriptEvents::POST_INSTALL_CMD => 'install',
             ScriptEvents::POST_UPDATE_CMD => 'update',
+            PluginEvents::COMMAND => 'inspectCommand',
             'auto-scripts' => 'executeAutoScripts',
         ];
     }
