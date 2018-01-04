@@ -21,7 +21,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author Thibault Duplessis <thibault.duplessis@gmail.com>
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class User implements UserInterface, GroupableInterface
+abstract class User
 {
     /**
      * @var mixed

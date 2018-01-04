@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-abstract class Group implements GroupInterface
+abstract class Group
 {
     /**
      * @var mixed
