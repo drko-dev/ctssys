@@ -88,3 +88,6 @@ Encore
 npm install --save buefy vue-router
 
 //
+
+//instalar doctrine
+coposer require orm
