@@ -24,3 +24,12 @@ fos_user:
     from_email:
         address: '%env(MAILER_USER)%'
         sender_name: '%env(SENDER_USER)%'
+    #Se obliga a confirmar correo
+    registration:
+            confirmation:
+                enabled: true
+
+    #Se obliga a confirmar correo cunado se cambia el mismo
+    profile:
+        email_update_confirmation:
+            enabled: true
