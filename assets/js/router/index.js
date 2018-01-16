@@ -19,7 +19,8 @@ export default new Router({
       component: Home
     },
     {
-      path: '*',
+      // path: '*',
+      path: '/notfound',
       name: 'notfound',
       component: Notfound
     },

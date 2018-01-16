@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %} {% block body %}
+<div class="container">
+    <section class="hero is-dark is-fullheight">
+        <div class="hero-head">
+            <header class="navbar">
+            </header>
+        </div>
+        <div class="block">
+            <section class="hero is-danger">
+                <div class="hero-body">
+                    <div class="container">
+                        <p class="title">
+                            404 Page not found
+                        </p>
+                        <p class="subtitle">
+                            its just another vue route - you can change the url above to any thing Checkout for any URL misspelling or <b><a href="{{ path('homepage') }}">return to the homepage</a>.</b>
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <!-- Hero footer: will stick at the bottom -->
+        <div class="hero-foot">
+            <nav class="tabs is-boxed is-fullwidth">
+            </nav>
+        </div>
+    </section>
+</div>
+{% endblock %}

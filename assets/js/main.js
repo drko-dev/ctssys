@@ -8,9 +8,7 @@ Vue.config.productionTip = false
 Vue.use(Buefy)
 Vue.use(VueRouter);
 
-
-// bootstrap the demo
-let demo = new Vue({
+let appVue = new Vue({
   el: '#vueApp',
   router,
   template: '<App/>',

@@ -18,15 +18,22 @@ class IndexController extends Controller
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig');
     }
-
+    
     /**
-     * @Route("/index/", name="demo")
+     * @Route("/json-demo/", name="json-demo")
      */
-    public function demo(Request $request)
+    public function jsonDemo()
     {   
-        $this->mail('gustavito');
-        return $this->render('default/index.html.twig');
-    }    
+      $myresponse = array(
+        'success' => true,
+        'content' => array(
+            'main_content' => 'A long string',
+            'secondary_content' => 'another string'
+        )
+      );
+        
+      return new JsonResponse($myresponse);
+    }   
 
     public function mail($name)
     {
