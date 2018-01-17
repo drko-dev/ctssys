@@ -7,7 +7,7 @@
 ###< symfony/framework-bundle ###
 
 ###> symfony/webpack-encore-pack ###
-#/node_modules/
+/node_modules/.cache/
 #/public/build/
 ###< symfony/webpack-encore-pack ###
 
