@@ -1,10 +1,11 @@
-<template id="hola">
+<template>
   <div class="block">
   <!-- Hero content: will be in the middle -->
     <div class="hero-body">
       <div class="container has-text-centered">
           <h1 class="title">
-            <div class="nombre">{{nombre}}</div>
+            <!-- <div class="nombre">{{$data}}</div> -->
+            <div v-for="item in lista.results"> {{ item.name.first }}</div>
           </h1>
         <h2 class="subtitle">
           Innovating and making everything simpler
@@ -16,79 +17,39 @@
 
 
 <script>
-  export default {
+
+var urlUsers = 'https://randomuser.me/api/?results=5';
+
+var lista = {};
+
+export default {
     name: 'hello',
-    
-    // data: function() {
-    //     return{
-    //         campaigns: []
-    //     }
-    //   },
 
-    // ready: function () {
-    //     this.fetchCampaigns();
-    // },
+    created: function(){
+        this.getUser();
+    },
 
-    // methods: {
-    //     fetchCampaigns: function () {
-    //       var campaigns = [];
-    //       this.$http.get('https://randomuser.me/api/?result=10')
-    //         .success(function (campaigns) {
-    //           this.$set('campaigns', campaigns);
+    data: function() {
+        return { lista }
+    },
 
-    //         })
-    //         .error(function (err) {
-    //           campaigns.log(err);
-    //         });
-    //     },
-    // }
-    
-    data() {
-      return{
-        nombre: 'Hola Mundo'
-      }
+    methods: { 
+        getUser(){
+        // GET /someUrl
+        this.$http.get(urlUsers).then(
+            response => {
+                // get body data
+                this.lista = response.body;
+
+            }, 
+            response => {
+                // error callback
+                alert('error conexión');
+            });
+        }
     }
+}
 
-  //   ready() {
-  //       this.$http.post('/my-api', {}).then((response) => {
-  //      //success
-  //   }, (response) => {
-  //     //error
-  //   });
-  // }
-
-    // data() {
-    //   return{
-    //     lista:[]
-    //   }
-    // },
-
-    // ready() {
-    //     this.$http.get('https://randomuser.me/api/?result=10').then((response) => {
-
-    //         this.lista = response;
-
-    //     }, (response) => {
-
-    //         alert('error');
-
-    //     });
-    // },
-
-  //   ready(){
-  //     this.getData();
-  //   },
-
-  //     ready() {
-  //  this.$http.post('/my-api', {}).then((response) => {
-  //      //success
-  //   }, (response) => {
-  //     //error
-  //   });
-  // }
-
-
-  }
 </script>
 
 
@@ -96,6 +57,7 @@
   
 .nombre{
     color: red;
+    /*font-size: 2em;*/
 }
 
 </style>
