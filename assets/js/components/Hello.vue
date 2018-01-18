@@ -6,12 +6,12 @@
           <h1 class="title">
            Titulo
           </h1>
-            <div class="nombre">
+ <!--            <div class="nombre">
                 <pre>
                     {{$data}}
                 </pre>
-            </div>
-            <div v-for="item in lista.content"> {{ item.nombre }}</div>
+            </div> -->
+            <div class="nombre" v-for="item in lista.content"> {{ item.nombre }} - {{ item.apellido }}</div>
         <h2 class="subtitle">
           Innovating and making everything simpler
         </h2>
