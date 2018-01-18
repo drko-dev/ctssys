@@ -4,9 +4,14 @@
     <div class="hero-body">
       <div class="container has-text-centered">
           <h1 class="title">
-            <!-- <div class="nombre">{{$data}}</div> -->
-            <div v-for="item in lista.results"> {{ item.name.first }}</div>
+           Titulo
           </h1>
+            <div class="nombre">
+                <pre>
+                    {{$data}}
+                </pre>
+            </div>
+            <!-- <div v-for="item in lista.results"> {{ item.name.first }}</div> -->
         <h2 class="subtitle">
           Innovating and making everything simpler
         </h2>
@@ -19,7 +24,7 @@
 <script>
 
 var urlUsers = 'https://randomuser.me/api/?results=5';
-
+var urlLocal = '/json-demo';
 var lista = {};
 
 export default {
@@ -36,7 +41,7 @@ export default {
     methods: { 
         getUser(){
         // GET /someUrl
-        this.$http.get(urlUsers).then(
+        this.$http.get(urlLocal).then(
             response => {
                 // get body data
                 this.lista = response.body;
@@ -44,7 +49,7 @@ export default {
             }, 
             response => {
                 // error callback
-                alert('error conexión');
+                alert(urlLocal);
             });
         }
     }
@@ -57,7 +62,7 @@ export default {
   
 .nombre{
     color: red;
-    /*font-size: 2em;*/
+    font-size: 1em;
 }
 
 </style>
