@@ -11,7 +11,7 @@
                     {{$data}}
                 </pre>
             </div>
-            <!-- <div v-for="item in lista.results"> {{ item.name.first }}</div> -->
+            <div v-for="item in lista.content"> {{ item.nombre }}</div>
         <h2 class="subtitle">
           Innovating and making everything simpler
         </h2>

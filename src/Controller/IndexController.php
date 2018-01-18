@@ -25,10 +25,15 @@ class IndexController extends Controller
     public function jsonDemo()
     {   
       $myresponse = array(
-        'success' => true,
-        'content' => array(
-            'main_content' => 'A long string',
-            'secondary_content' => 'another string'
+        'content' => array( 
+            array(
+                'nombre' => 'Gustavito',
+                'apellido' => 'Marcon'
+            ),
+            array(
+                'nombre' => 'Constanza',
+                'apellido' => 'Marcon'
+            )
         )
       );
         
