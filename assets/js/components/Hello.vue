@@ -3,9 +3,9 @@
   <!-- Hero content: will be in the middle -->
     <div class="hero-body">
       <div class="container has-text-centered">
-          <h1 class="title">
-           Titulo
-          </h1>
+        <h1 class="title">
+        Titulo
+        </h1>
  <!--            <div class="nombre">
                 <pre>
                     {{$data}}
@@ -25,17 +25,18 @@
 
 var urlUsers = 'https://randomuser.me/api/?results=5';
 var urlLocal = '/json-demo';
-var lista = {};
 
 export default {
     name: 'hello',
 
-    created: function(){
+    created(){
         this.getUser();
     },
 
-    data: function() {
-        return { lista }
+    data(){
+        return {
+            lista:[]
+        }
     },
 
     methods: { 
@@ -45,7 +46,6 @@ export default {
             response => {
                 // get body data
                 this.lista = response.body;
-
             }, 
             response => {
                 // error callback
@@ -61,7 +61,7 @@ export default {
 <style lang="css" scoped>
   
 .nombre{
-    color: red;
+    color: green;
     font-size: 1em;
 }
 
