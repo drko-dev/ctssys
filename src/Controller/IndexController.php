@@ -21,7 +21,7 @@ class IndexController extends Controller
     }
     
     /**
-     * @Route("/get-users/", name="get-users")
+     * @Route("/api/get-users/", name="get-users", defaults={"_format": "json"})
      * @Method("GET")
      */
     public function getUsers()

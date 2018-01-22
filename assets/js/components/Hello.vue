@@ -23,8 +23,7 @@
 
 <script>
 
-var urlUsers = 'https://randomuser.me/api/?results=5';
-var urlLocal = '/get-users';
+var urlLocal = '/api/get-users';
 
 export default {
     name: 'hello',
@@ -61,7 +60,7 @@ export default {
 <style lang="css" scoped>
   
 .nombre{
-    color: green;
+    color: silver;
     font-size: 1em;
 }
 
