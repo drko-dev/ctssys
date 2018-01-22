@@ -18,6 +18,8 @@ use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\DependencyResolver\Operation\UninstallOperation;
+use Composer\DependencyResolver\Pool;
+use Composer\Downloader\FileDownloader;
 use Composer\Factory;
 use Composer\EventDispatcher\EventSubscriberInterface;
 use Composer\Installer;
@@ -30,22 +32,25 @@ use Composer\IO\IOInterface;
 use Composer\IO\NullIO;
 use Composer\Json\JsonFile;
 use Composer\Json\JsonManipulator;
-use Composer\Plugin\CommandEvent;
+use Composer\Package\PackageInterface;
 use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
+use Composer\Plugin\PreFileDownloadEvent;
+use Composer\Repository\ComposerRepository as BaseComposerRepository;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
-use Hirak\Prestissimo\Plugin as Prestissimo;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Thanks\Thanks;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
+ * @author Nicolas Grekas <p@tchwork.com>
  */
 class Flex implements PluginInterface, EventSubscriberInterface
 {
     private $composer;
     private $io;
+    private $config;
     private $options;
     private $configurator;
     private $downloader;
@@ -53,8 +58,22 @@ class Flex implements PluginInterface, EventSubscriberInterface
     private $operations = [];
     private $lock;
     private $cacheDirPopulated = false;
-    private $displayThanksReminder = false;
+    private $displayThanksReminder = 0;
+    private $rfs;
     private static $activated = true;
+    private static $repoReadingCommands = [
+        'create-project' => true,
+        'outdated' => true,
+        'require' => true,
+        'update' => true,
+        'install' =>true,
+    ];
+    private static $aliasResolveCommands = [
+        'require' => true,
+        'update' => false,
+        'remove' => false,
+        'unpack' => true,
+    ];
 
     public function activate(Composer $composer, IOInterface $io)
     {
@@ -75,11 +94,30 @@ class Flex implements PluginInterface, EventSubscriberInterface
 
         $this->composer = $composer;
         $this->io = $io;
+        $this->config = $composer->getConfig();
         $this->options = $this->initOptions();
+
+        $rfs = Factory::createRemoteFilesystem($this->io, $this->config);
+        $this->rfs = new ParallelDownloader($this->io, $this->config, $rfs->getOptions(), $rfs->isTlsDisabled());
         $this->configurator = new Configurator($composer, $io, $this->options);
-        $this->downloader = new Downloader($composer, $io);
+        $this->downloader = new Downloader($composer, $io, $this->rfs);
         $this->downloader->setFlexId($this->getFlexId());
         $this->lock = new Lock(str_replace(Factory::getComposerFile(), 'composer.json', 'symfony.lock'));
+
+        $populateRepoCacheDir = __CLASS__ === self::class;
+        if ($composer->getPluginManager()) {
+            foreach ($composer->getPluginManager()->getPlugins() as $plugin) {
+                if (0 === strpos(get_class($plugin), 'Hirak\Prestissimo\Plugin')) {
+                    if (method_exists($rfs, 'getRemoteContents')) {
+                        $plugin->disable();
+                    } else {
+                        $this->cacheDirPopulated = true;
+                    }
+                    $populateRepoCacheDir = false;
+                    break;
+                }
+            }
+        }
 
         $backtrace = debug_backtrace();
         foreach ($backtrace as $trace) {
@@ -98,14 +136,49 @@ class Flex implements PluginInterface, EventSubscriberInterface
                 continue;
             }
 
+            $input = $trace['args'][0];
             $app = $trace['object'];
+
             $resolver = new PackageResolver($this->downloader);
+
+            if (version_compare('1.1.0', PluginInterface::PLUGIN_API_VERSION, '>')) {
+                $note = $app->has('self-update') ? sprintf('`php %s self-update`', $_SERVER['argv'][0]) : 'https://getcomposer.org/';
+                $io->writeError('<warning>Some Symfony Flex features may not work as expected: your version of Composer is too old</>');
+                $io->writeError(sprintf('<warning>Please upgrade using %s</>', $note));
+            }
+
+            try {
+                $command = $input->getFirstArgument();
+                $command = $command ? $app->find($command)->getName() : null;
+            } catch (\InvalidArgumentException $e) {
+            }
+
+            if ('create-project' === $command) {
+                $input->setInteractive(false);
+            } elseif ('update' === $command) {
+                $this->displayThanksReminder = 1;
+            }
+
+            if (isset(self::$aliasResolveCommands[$command])) {
+                // early resolve for BC with Composer 1.0
+                if ($input->hasArgument('packages')) {
+                    $input->setArgument('packages', $resolver->resolve($input->getArgument('packages'), self::$aliasResolveCommands[$command]));
+                }
+
+                if ($input->hasOption('no-suggest')) {
+                    $input->setOption('no-suggest', true);
+                }
+            }
+
+            if ($populateRepoCacheDir && isset(self::$repoReadingCommands[$command]) && ('install' !== $command || (file_exists('composer.json') && !file_exists('composer.lock')))) {
+                $this->populateRepoCacheDir();
+            }
+
             $app->add(new Command\RequireCommand($resolver));
             $app->add(new Command\UpdateCommand($resolver));
             $app->add(new Command\RemoveCommand($resolver));
             $app->add(new Command\UnpackCommand($resolver));
 
-            $trace['args'][0]->setInteractive(false);
             break;
         }
     }
@@ -115,11 +188,11 @@ class Flex implements PluginInterface, EventSubscriberInterface
         $json = new JsonFile(Factory::getComposerFile());
         $manipulator = new JsonManipulator(file_get_contents($json->getPath()));
         // new projects are most of the time proprietary
-        $manipulator->addProperty('license', 'proprietary');
+        $manipulator->addMainKey('license', 'proprietary');
         // 'name' and 'description' are only required for public packages
-        $manipulator->removeProperty('name');
-        $manipulator->removeProperty('description');
-        file_put_contents($json->getPath(), $manipulator->getContents());
+        // don't use $manipulator->removeProperty() for BC with Composer 1.0
+        $contents = preg_replace('{^\s*+"(?:name|description)":.*,$\n}m', '', $manipulator->getContents());
+        file_put_contents($json->getPath(), $contents);
     }
 
     public function record(PackageEvent $event)
@@ -167,7 +240,7 @@ class Flex implements PluginInterface, EventSubscriberInterface
             }
         }
 
-        if ($this->displayThanksReminder) {
+        if (2 === $this->displayThanksReminder) {
             $love = '\\' === DIRECTORY_SEPARATOR ? 'love' : '💖 ';
             $star = '\\' === DIRECTORY_SEPARATOR ? 'star' : '★ ';
 
@@ -260,10 +333,10 @@ class Flex implements PluginInterface, EventSubscriberInterface
         $this->lock->write();
     }
 
-    public function inspectCommand(CommandEvent $event)
+    public function enableThanksReminder()
     {
-        if ('update' === $event->getCommandName() && !class_exists(Thanks::class, false)) {
-            $this->displayThanksReminder = true;
+        if (1 === $this->displayThanksReminder) {
+            $this->displayThanksReminder = !class_exists(Thanks::class, false) && version_compare('1.1.0', PluginInterface::PLUGIN_API_VERSION, '<=') ? 2 : 0;
         }
     }
 
@@ -283,19 +356,118 @@ class Flex implements PluginInterface, EventSubscriberInterface
         $this->io->write($this->postInstallOutput);
     }
 
-    public function populateCacheDir(InstallerEvent $event)
+    public function populateProvidersCacheDir(InstallerEvent $event)
     {
-        if (extension_loaded('curl') && class_exists(Prestissimo::class, false)) {
-            // let hirak/prestissimo handle downloads when the curl extension is installed
-            return;
+        $listed = [];
+        $packages = [];
+        $pool = $event->getPool();
+        $pool = \Closure::bind(function () {
+            foreach ($this->providerRepos as $k => $repo) {
+                $this->providerRepos[$k] = new class($repo) extends BaseComposerRepository {
+                    private $repo;
+
+                    public function __construct($repo)
+                    {
+                        $this->repo = $repo;
+                    }
+
+                    public function whatProvides(Pool $pool, $name, $bypassFilters = false)
+                    {
+                        $packages = [];
+                        foreach ($this->repo->whatProvides($pool, $name, $bypassFilters) as $k => $p) {
+                            $packages[$k] = clone $p;
+                        }
+
+                        return $packages;
+                    }
+                };
+            }
+
+            return $this;
+        }, clone $pool, $pool)();
+
+        foreach ($event->getRequest()->getJobs() as $job) {
+            if ('install' !== $job['cmd'] || false === strpos($job['packageName'], '/')) {
+                continue;
+            }
+
+            $listed[$job['packageName']] = true;
+            $packages[] = [$job['packageName'], $job['constraint']];
         }
+
+        $this->rfs->download($packages, function ($packageName, $constraint) use (&$listed, &$packages, $pool) {
+            foreach ($pool->whatProvides($packageName, $constraint, true) as $package) {
+                foreach (array_merge($package->getRequires(), $package->getConflicts(), $package->getReplaces()) as $link) {
+                    if (isset($listed[$link->getTarget()]) || false === strpos($link->getTarget(), '/')) {
+                        continue;
+                    }
+                    $listed[$link->getTarget()] = true;
+                    $packages[] = [$link->getTarget(), $link->getConstraint()];
+                }
+            }
+        });
+    }
+
+    public function populateFilesCacheDir(InstallerEvent $event)
+    {
         if ($this->cacheDirPopulated) {
             return;
         }
         $this->cacheDirPopulated = true;
 
-        $downloader = new ParallelDownloader($this->io, $this->composer->getConfig());
-        $downloader->populateCacheDir($event->getOperations());
+        $downloads = [];
+        $cacheDir = rtrim($this->config->get('cache-files-dir'), '\/').DIRECTORY_SEPARATOR;
+        $getCacheKey = function (PackageInterface $package, $processedUrl) { return $this->getCacheKey($package, $processedUrl); };
+        $getCacheKey = \Closure::bind($getCacheKey, new FileDownloader($this->io, $this->config), FileDownloader::class);
+
+        foreach ($event->getOperations() as $op) {
+            if ('install' === $op->getJobType()) {
+                $package = $op->getPackage();
+            } elseif ('update' === $op->getJobType()) {
+                $package = $op->getTargetPackage();
+            } else {
+                continue;
+            }
+
+            if (!$fileUrl = $package->getDistUrl()) {
+                continue;
+            }
+
+            if ($package->getDistMirrors()) {
+                $fileUrl = current($package->getDistUrls());
+            }
+
+            if (!preg_match('/^https?:/', $fileUrl) || !$originUrl = parse_url($fileUrl, PHP_URL_HOST)) {
+                continue;
+            }
+
+            if (file_exists($file = $cacheDir.$getCacheKey($package, $fileUrl))) {
+                continue;
+            }
+
+            @mkdir(dirname($file), 0775, true);
+
+            if (!is_dir(dirname($file))) {
+                continue;
+            }
+
+            if (preg_match('#^https://github\.com/#', $package->getSourceUrl()) && preg_match('#^https://api\.github\.com/repos(/[^/]++/[^/]++/)zipball(.++)$#', $fileUrl, $m)) {
+                $fileUrl = sprintf('https://codeload.github.com%slegacy.zip%s', $m[1], $m[2]);
+            }
+
+            $downloads[] = [$originUrl, $fileUrl, [], $file, false];
+        }
+
+        if (1 < count($downloads)) {
+            $this->rfs->download($downloads, [$this->rfs, 'get'], false);
+        }
+    }
+
+    public function onFileDownload(PreFileDownloadEvent $event)
+    {
+        if ($event->getRemoteFilesystem() !== $this->rfs) {
+            $event->setRemoteFilesystem($this->rfs->setNextOptions($event->getRemoteFilesystem()->getOptions()));
+        }
     }
 
     private function fetchRecipes(): array
@@ -419,6 +591,30 @@ class Flex implements PluginInterface, EventSubscriberInterface
         return false;
     }
 
+    private function populateRepoCacheDir()
+    {
+        $repos = [];
+
+        foreach ($this->composer->getPackage()->getRepositories() as $name => $repo) {
+            if (!isset($repo['type']) || 'composer' !==  $repo['type'] || !empty($repo['force-lazy-providers'])) {
+                continue;
+            }
+
+            if (!preg_match('#^https\?://#', $repo['url'])) {
+                continue;
+            }
+
+            $repo = new ComposerRepository($repo, $this->io, $this->config, null, $this->rfs);
+
+            $repos[] = [$repo];
+        }
+
+        $this->rfs->download($repos, function ($repo) {
+            ParallelDownloader::$cacheNext = true;
+            $repo->getProviderNames();
+        });
+    }
+
     public static function getSubscribedEvents(): array
     {
         if (!self::$activated) {
@@ -426,16 +622,17 @@ class Flex implements PluginInterface, EventSubscriberInterface
         }
 
         return [
-            InstallerEvents::POST_DEPENDENCIES_SOLVING => [['populateCacheDir', PHP_INT_MAX]],
-            PackageEvents::PRE_PACKAGE_INSTALL => [['populateCacheDir', ~PHP_INT_MAX]],
-            PackageEvents::PRE_PACKAGE_UPDATE => [['populateCacheDir', ~PHP_INT_MAX]],
+            InstallerEvents::PRE_DEPENDENCIES_SOLVING => [['populateProvidersCacheDir', PHP_INT_MAX]],
+            InstallerEvents::POST_DEPENDENCIES_SOLVING => [['populateFilesCacheDir', PHP_INT_MAX]],
+            PackageEvents::PRE_PACKAGE_INSTALL => [['populateFilesCacheDir', ~PHP_INT_MAX]],
+            PackageEvents::PRE_PACKAGE_UPDATE => [['populateFilesCacheDir', ~PHP_INT_MAX]],
             PackageEvents::POST_PACKAGE_INSTALL => 'record',
-            PackageEvents::POST_PACKAGE_UPDATE => 'record',
+            PackageEvents::POST_PACKAGE_UPDATE => [['record'], ['enableThanksReminder']],
             PackageEvents::POST_PACKAGE_UNINSTALL => 'record',
             ScriptEvents::POST_CREATE_PROJECT_CMD => 'configureProject',
             ScriptEvents::POST_INSTALL_CMD => 'install',
             ScriptEvents::POST_UPDATE_CMD => 'update',
-            PluginEvents::COMMAND => 'inspectCommand',
+            PluginEvents::PRE_FILE_DOWNLOAD => 'onFileDownload',
             'auto-scripts' => 'executeAutoScripts',
         ];
     }

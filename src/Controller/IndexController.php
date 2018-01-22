@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,29 @@ class IndexController extends Controller
     }
     
     /**
+     * @Route("/get-users/", name="get-users")
+     * @Method("GET")
+     */
+    public function getUsers()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('App:User')->findAll();
+        $users = array();
+
+        foreach ($user as $value) {
+            $users[$value->getId()] = array(
+                'id' => $value->getId(),
+                'username' => $value->getUsername(),
+                'email' => $value->getEmail(),                  
+            );
+        }
+
+        return new JsonResponse($users);
+    }
+
+    /**
      * @Route("/json-demo/", name="json-demo")
+     * @Method("GET")
      */
     public function jsonDemo()
     {   

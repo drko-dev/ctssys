@@ -6,12 +6,12 @@
         <h1 class="title">
         Titulo
         </h1>
- <!--            <div class="nombre">
+<!--             <div class="nombre">
                 <pre>
                     {{$data}}
                 </pre>
             </div> -->
-            <div class="nombre" v-for="item in lista.content"> {{ item.nombre }} - {{ item.apellido }}</div>
+            <div class="nombre" v-for="item in lista"> {{ item.username }} - {{ item.email }}</div>
         <h2 class="subtitle">
           Innovating and making everything simpler
         </h2>
@@ -24,7 +24,7 @@
 <script>
 
 var urlUsers = 'https://randomuser.me/api/?results=5';
-var urlLocal = '/json-demo';
+var urlLocal = '/get-users';
 
 export default {
     name: 'hello',
