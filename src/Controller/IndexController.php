@@ -63,6 +63,20 @@ class IndexController extends Controller
       return new JsonResponse($myresponse);
     }   
 
+    /**
+     * @Route("/api/contact/", name="contact")
+     * @Method("POST")
+     */
+    public function contact(Request $request)
+    {  
+        if ($request->isMethod('POST')) {                  
+           
+            var_dump($request);
+       
+        }
+        return new JsonResponse('ok', 201);
+    }
+
     public function mail($name)
     {
         $message = (new \Swift_Message('Hello Email'))
