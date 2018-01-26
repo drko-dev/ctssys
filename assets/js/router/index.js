@@ -7,11 +7,12 @@ import Home from '../components/Home'
 import Hello from '../components/Hello'
 import Notfound from '../components/Notfound'
 import Demo from '../components/Demo'
+import Contact from '../components/Contact'
 
 export default new Router({
   linkExactActiveClass: '',
   linkActiveClass: 'is-active',
-  mode: 'history',
+  //mode: 'history',
   routes: [
     {
       path: '/',
@@ -19,8 +20,7 @@ export default new Router({
       component: Home
     },
     {
-      // path: '*',
-      path: '/notfound',
+      path: '*',
       name: 'notfound',
       component: Notfound
     },
@@ -33,6 +33,11 @@ export default new Router({
       path: '/demo',
       name: 'demo',
       component: Demo
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: Contact
     }
   ]
 })

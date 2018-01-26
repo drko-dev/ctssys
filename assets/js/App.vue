@@ -16,7 +16,7 @@
                   <router-link class="navbar-item" to="/" exact>Inicio</router-link>
                   <router-link class="navbar-item" to="hello">Novedades</router-link>
                   <router-link class="navbar-item" to="demo">Acerca</router-link>
-                  <router-link class="navbar-item" to="notfound">Contacto</router-link>
+                  <router-link class="navbar-item" to="contact">Contacto</router-link>
                 <span class="navbar-item">
                   <a class="button is-success">
                     <span class="icon">
