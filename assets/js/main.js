@@ -5,13 +5,16 @@ import router from './router/'
 import Buefy from 'buefy'
 import App from './App.vue'
 import VueFormGenerator from "vue-form-generator";
+import VueFormly from 'vue-formly'
+import VueFormlyBuefy from 'vue-formly-buefy'
 
 Vue.config.productionTip = false
-Vue.use(Buefy)
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.use(VueFormGenerator);
-
+Vue.use(Buefy)
+Vue.use(VueFormly)
+Vue.use(VueFormlyBuefy)
 let appVue = new Vue({
   el: '#vueApp',
   router,
