@@ -5,8 +5,9 @@
         <div class="content">
           <slot></slot>
         </div>
-        <form class="form is-sample" :action="action" :method="method">
+        <form class="form is-sample" @submit.prevent="onSubmit" :action="action" :method="method">
           <formly-form :form="form" :model="model" :fields="fields"></formly-form>
+           <button type="submit" class="button is-primary">Send</button>
         </form>
       </div>
     </div>
@@ -17,6 +18,21 @@
   import * as controls from 'vue-formly-buefy/dist/controls'
 
   export default {
+    methods: {
+      onSubmit(){
+        // GET /someUrl
+        this.$http.post('/api/contact/', this.model).then(
+            response => {
+              // get body data
+              //this.lista = response.body;
+                console.log(this.model);
+            },
+            response => {
+                // error callback
+                alert('error');
+            });
+      }
+    },
     props: {
       action: {
         type: String,
@@ -31,11 +47,11 @@
       return {
         form: {},
         model: {
-          name: 'John Silver',
-          email: 'john@',
-          username: 'johnsilver',
+          name: '',
+          email: '',
+          username: 'usuario',
           telephone: '',
-          password: 'iwantmytreasure',
+          password: '',
           message: '',
         },
         fields: [
@@ -193,6 +209,9 @@
   /*
    * Override Bulma rules to properly display a non-standard field.
    */
+   fieldset{
+     border: none;
+   }
   .field.is-addons-ordered {
     flex-wrap: wrap;
     position: relative;
