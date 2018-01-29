@@ -4629,84 +4629,6 @@
         ]
     },
     {
-        "name": "friendsofsymfony/user-bundle",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-            "reference": "6731b4615f2ba465abfcfa51e898f7cc8463813d"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/6731b4615f2ba465abfcfa51e898f7cc8463813d",
-            "reference": "6731b4615f2ba465abfcfa51e898f7cc8463813d",
-            "shasum": ""
-        },
-        "require": {
-            "paragonie/random_compat": "^1 || ^2",
-            "php": "^5.5.9 || ^7.0",
-            "symfony/form": "^2.8 || ^3.0 || ^4.0",
-            "symfony/framework-bundle": "^2.8 || ^3.0 || ^4.0",
-            "symfony/security-bundle": "^2.8 || ^3.0 || ^4.0",
-            "symfony/templating": "^2.8 || ^3.0 || ^4.0",
-            "symfony/twig-bundle": "^2.8 || ^3.0 || ^4.0",
-            "symfony/validator": "^2.8 || ^3.0 || ^4.0",
-            "twig/twig": "^1.28 || ^2.0"
-        },
-        "conflict": {
-            "doctrine/doctrine-bundle": "<1.3",
-            "symfony/doctrine-bridge": "<2.7"
-        },
-        "require-dev": {
-            "doctrine/doctrine-bundle": "^1.3",
-            "friendsofphp/php-cs-fixer": "^2.2",
-            "phpunit/phpunit": "^4.8.35|^5.7.11|^6.5",
-            "swiftmailer/swiftmailer": "^4.3 || ^5.0 || ^6.0",
-            "symfony/console": "^2.8 || ^3.0 || ^4.0",
-            "symfony/phpunit-bridge": "^2.8 || ^3.0 || ^4.0",
-            "symfony/yaml": "^2.8 || ^3.0 || ^4.0"
-        },
-        "time": "2018-01-10T07:38:35+00:00",
-        "type": "symfony-bundle",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.1.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-4": {
-                "FOS\\UserBundle\\": ""
-            },
-            "exclude-from-classmap": [
-                "/Tests/"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Christophe Coevoet",
-                "email": "stof@notk.org"
-            },
-            {
-                "name": "FriendsOfSymfony Community",
-                "homepage": "https://github.com/friendsofsymfony/FOSUserBundle/contributors"
-            },
-            {
-                "name": "Thibault Duplessis"
-            }
-        ],
-        "description": "Symfony FOSUserBundle",
-        "homepage": "http://friendsofsymfony.github.com",
-        "keywords": [
-            "User management"
-        ]
-    },
-    {
         "name": "doctrine/inflector",
         "version": "v1.3.0",
         "version_normalized": "1.3.0.0",
@@ -4899,18 +4821,96 @@
         ]
     },
     {
-        "name": "symfony/flex",
-        "version": "v1.0.66",
-        "version_normalized": "1.0.66.0",
+        "name": "friendsofsymfony/user-bundle",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
         "source": {
             "type": "git",
-            "url": "https://github.com/symfony/flex.git",
-            "reference": "b366e902710c8dc8d8be97ed8d64ef574d9bffcb"
+            "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
+            "reference": "9b3be01d5d03df2b20b5dd955adb72c0ebb3dc9c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/flex/zipball/b366e902710c8dc8d8be97ed8d64ef574d9bffcb",
-            "reference": "b366e902710c8dc8d8be97ed8d64ef574d9bffcb",
+            "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/9b3be01d5d03df2b20b5dd955adb72c0ebb3dc9c",
+            "reference": "9b3be01d5d03df2b20b5dd955adb72c0ebb3dc9c",
+            "shasum": ""
+        },
+        "require": {
+            "paragonie/random_compat": "^1 || ^2",
+            "php": "^5.5.9 || ^7.0",
+            "symfony/form": "^2.8 || ^3.0 || ^4.0",
+            "symfony/framework-bundle": "^2.8 || ^3.0 || ^4.0",
+            "symfony/security-bundle": "^2.8 || ^3.0 || ^4.0",
+            "symfony/templating": "^2.8 || ^3.0 || ^4.0",
+            "symfony/twig-bundle": "^2.8 || ^3.0 || ^4.0",
+            "symfony/validator": "^2.8 || ^3.0 || ^4.0",
+            "twig/twig": "^1.28 || ^2.0"
+        },
+        "conflict": {
+            "doctrine/doctrine-bundle": "<1.3",
+            "symfony/doctrine-bridge": "<2.7"
+        },
+        "require-dev": {
+            "doctrine/doctrine-bundle": "^1.3",
+            "friendsofphp/php-cs-fixer": "^2.2",
+            "phpunit/phpunit": "^4.8.35|^5.7.11|^6.5",
+            "swiftmailer/swiftmailer": "^4.3 || ^5.0 || ^6.0",
+            "symfony/console": "^2.8 || ^3.0 || ^4.0",
+            "symfony/phpunit-bridge": "^2.8 || ^3.0 || ^4.0",
+            "symfony/yaml": "^2.8 || ^3.0 || ^4.0"
+        },
+        "time": "2018-01-25T09:29:07+00:00",
+        "type": "symfony-bundle",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.1.x-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "FOS\\UserBundle\\": ""
+            },
+            "exclude-from-classmap": [
+                "/Tests/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Christophe Coevoet",
+                "email": "stof@notk.org"
+            },
+            {
+                "name": "FriendsOfSymfony Community",
+                "homepage": "https://github.com/friendsofsymfony/FOSUserBundle/contributors"
+            },
+            {
+                "name": "Thibault Duplessis"
+            }
+        ],
+        "description": "Symfony FOSUserBundle",
+        "homepage": "http://friendsofsymfony.github.com",
+        "keywords": [
+            "User management"
+        ]
+    },
+    {
+        "name": "symfony/flex",
+        "version": "v1.0.67",
+        "version_normalized": "1.0.67.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/symfony/flex.git",
+            "reference": "ac1c6aaafc4a9fddba3626867d786d151d2cc2ac"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/symfony/flex/zipball/ac1c6aaafc4a9fddba3626867d786d151d2cc2ac",
+            "reference": "ac1c6aaafc4a9fddba3626867d786d151d2cc2ac",
             "shasum": ""
         },
         "require": {
@@ -4921,7 +4921,7 @@
             "composer/composer": "^1.0.2",
             "symfony/phpunit-bridge": "^3.2.8"
         },
-        "time": "2018-01-21T09:15:48+00:00",
+        "time": "2018-01-25T06:46:31+00:00",
         "type": "composer-plugin",
         "extra": {
             "branch-alias": {
@@ -4948,24 +4948,24 @@
     },
     {
         "name": "symfony/thanks",
-        "version": "v1.0.3",
-        "version_normalized": "1.0.3.0",
+        "version": "v1.0.5",
+        "version_normalized": "1.0.5.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/thanks.git",
-            "reference": "8c12bbe4baabcb8e640efaaaab40e3a4497c9fb4"
+            "reference": "c757ee0c9dcfcc0e9e30fbbbdcadeb9dcc9aaaf4"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/thanks/zipball/8c12bbe4baabcb8e640efaaaab40e3a4497c9fb4",
-            "reference": "8c12bbe4baabcb8e640efaaaab40e3a4497c9fb4",
+            "url": "https://api.github.com/repos/symfony/thanks/zipball/c757ee0c9dcfcc0e9e30fbbbdcadeb9dcc9aaaf4",
+            "reference": "c757ee0c9dcfcc0e9e30fbbbdcadeb9dcc9aaaf4",
             "shasum": ""
         },
         "require": {
             "composer-plugin-api": "^1.0",
             "php": "^5.5.9|^7.0.0"
         },
-        "time": "2018-01-19T16:12:41+00:00",
+        "time": "2018-01-26T10:44:34+00:00",
         "type": "composer-plugin",
         "extra": {
             "branch-alias": {
