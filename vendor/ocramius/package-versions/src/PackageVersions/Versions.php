@@ -88,7 +88,7 @@ final class Versions
   'zendframework/zend-eventmanager' => '3.2.0@9d72db10ceb6e42fb92350c0cb54460da61bd79c',
   'symfony/dotenv' => 'v4.0.3@afb6923923e22874dac20bd042167ccb8df1d158',
   'symfony/thanks' => 'v1.0.5@c757ee0c9dcfcc0e9e30fbbbdcadeb9dcc9aaaf4',
-  '__root__' => 'dev-master@72b6b805db793096c84525c20e6e8a53cbc846e3',
+  '__root__' => 'dev-master@f79850bb04062a6cd98588144b8bd59c33027649',
 );
 
     private function __construct()

@@ -138,7 +138,7 @@
                     type: controls.Span,
                     position: 'before',
                     options: {
-                      label: '+1',
+                      label: '+54',
                       properties: {
                         'class': 'button is-static is-right-border-none'
                       }

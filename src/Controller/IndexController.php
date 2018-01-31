@@ -26,18 +26,13 @@ class IndexController extends Controller
      */
     public function getUsers()
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository('App:User')->findAll();
-        $users = array();
-
-        foreach ($user as $value) {
-            $users[$value->getId()] = array(
-                'id' => $value->getId(),
-                'username' => $value->getUsername(),
-                'email' => $value->getEmail(),                  
-            );
-        }
-
+        $users = $this->getDoctrine()
+                      ->getRepository('App:User')
+                      ->createQueryBuilder('u')
+                      ->select('u')
+                      ->getQuery() 
+                      ->getArrayResult();// hidratando 
+        
         return new JsonResponse($users);
     }
 
@@ -63,13 +58,41 @@ class IndexController extends Controller
       return new JsonResponse($myresponse);
     }   
 
+    // RETORNA TIPO DE REQUEST
+    protected function getFormatRequest(Request $request)
+    {
+        if (!$request->attributes->has('_format')) { 
+            $acceptable = $request->getAcceptableContentTypes();
+            $acceptable = array_shift($acceptable);
+
+            switch ($acceptable) {
+                case 'text/html':
+                    $request->attributes->set('_format', 'html');
+                    break;
+            
+                case 'text/xml':
+                    $request->attributes->set('_format', 'xml');
+                    break;
+                
+                case 'application/json':
+                    $request->attributes->set('_format', 'json');
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+
+        return $request->getRequestFormat();
+    }
     /**
      * @Route("/api/contact/", name="contact")
      * @Method("POST")
      */
     public function contact(Request $request)
     {  
-        if ($request->isMethod('POST')) {                  
+        if ($request->isMethod('POST') and $this->getFormatRequest($request) == 'json') {                  
            
             var_dump($request);
        
